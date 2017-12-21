@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/reima4038/bot_discord_intra_squad_game#readme",
   "dependencies": {
-    "eris": "^0.8.2"
+    "eris": "^0.8.2",
+    "node-rest-client": "^3.1.0"
   }
 }
