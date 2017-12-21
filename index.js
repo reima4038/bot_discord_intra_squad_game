@@ -16,18 +16,22 @@ bot.on("ready", () => {
 
 bot.on("messageCreate", (msg) => {
     // 誰かがメッセージ(チャット)を発言した時に呼び出されるイベントです。
-    if(msg.content === "!match-up") {
-        client.post(baseUrl + "matches/create", function (data, response) {
-            bot.createMessage(msg.channel.id, "ほな、マッチの準備をするで〜。");
-            matchId = new Buffer(data).toString();
-        });
-    } else if(msg.content === "!info"){
-        client.get(baseUrl + "matches/{id}?matchId=" + matchId, function (data, response) {
-            bot.createMessage(msg.channel.id, "よしよし、マッチ情報やな。よぉ聞いとれよ。");            
-            var result = data.matchId;
-            bot.createMessage(msg.channel.id, result);
-        });
-    }
+    switch (msg.content){
+        case "!match-up":
+            client.post(baseUrl + "matches/create", function (data, response) {
+                bot.createMessage(msg.channel.id, "ほな、マッチの準備をするで〜。");
+                matchId = new Buffer(data).toString();
+            });
+            break;
+        case "!info":
+            client.get(baseUrl + "matches/{id}?matchId=" + matchId, function (data, response) {
+                bot.createMessage(msg.channel.id, "よしよし、マッチ情報やな。よぉ聞いとれよ。");            
+                var result = data.matchId;
+                bot.createMessage(msg.channel.id, result);
+            });
+            break;
+        default:
+      }
 });
 
 // Discord に接続します。
