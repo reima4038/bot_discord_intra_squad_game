@@ -2,11 +2,6 @@ const error = require("util").error;
 
 const Buffer = require("buffer").Buffer;
 const Eris = require("eris");
-const Client = require('node-rest-client').Client;
-
-const client = new Client();
-const baseUrl = "http://localhost:8080/form-matchup-tables/";
-let matchId = null;
 
 // BOT_TOKEN は 自身が作成したBotの Bot token の文字を記述します。
 const bot = new Eris("MzkzMzk0NTI3MDY4NDg3Njkw.DR1Kqw.3MuP3gLdtS3hjPyVu-9y3JHPcME");
@@ -41,6 +36,11 @@ bot.connect();
 /* ----------------------
  *  RESTサービスの呼び出し
  * ---------------------*/
+const Client = require('node-rest-client').Client;
+
+const client = new Client();
+const baseUrl = "http://localhost:8080/form-matchup-tables/";
+let matchId = null;
 
 /** マッチの準備をします。 */
 function ready(msg) {
