@@ -1,7 +1,7 @@
 const Eris = require("eris");
 
 // BOT_TOKEN は 自身が作成したBotの Bot token の文字を記述します。
-var bot = new Eris("KKSlnCeKiN_c09UVVQrvPD6EILn_VyJo");
+var bot = new Eris("MzkzMzk0NTI3MDY4NDg3Njkw.DR1Kqw.3MuP3gLdtS3hjPyVu-9y3JHPcME");
 
 bot.on("ready", () => {
     // bot が準備できたら呼び出されるイベントです。
