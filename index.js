@@ -1,6 +1,3 @@
-const error = require("util").error;
-
-const Buffer = require("buffer").Buffer;
 const Eris = require("eris");
 
 // BOT_TOKEN は 自身が作成したBotの Bot token の文字を記述します。
@@ -37,6 +34,7 @@ bot.connect();
  *  RESTサービスの呼び出し
  * ---------------------*/
 const Client = require('node-rest-client').Client;
+const Buffer = require("buffer").Buffer;
 
 const client = new Client();
 const baseUrl = "http://localhost:8080/form-matchup-tables/";
