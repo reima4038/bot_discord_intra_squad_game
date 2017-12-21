@@ -1,3 +1,5 @@
+const error = require("util").error;
+
 const Buffer = require("buffer").Buffer;
 const Eris = require("eris");
 const Client = require('node-rest-client').Client;
@@ -19,19 +21,14 @@ bot.on("messageCreate", (msg) => {
     switch (msg.content){
         case "!ready":
             bot.createMessage(msg.channel.id, "ほな、マッチの準備をするで〜。");    
-            client.post(baseUrl + "matches/create", function (data, response) {
-                matchId = new Buffer(data).toString();
-            });
+            ready(msg);
             break;
         case "!info":
             if(matchId == null){
                 bot.createMessage(msg.channel.id, "なんや、マッチの準備ができてないな。");  
             } else {   
                 bot.createMessage(msg.channel.id, "よしよし、マッチ情報やな。よぉ聞いとれよ。");                            
-                client.get(baseUrl + "matches/{id}?matchId=" + matchId, function (data, response) {
-                    var result = data.matchId;
-                    bot.createMessage(msg.channel.id, result);
-                });
+                info(msg);
             }
             break;
         default:
@@ -40,3 +37,30 @@ bot.on("messageCreate", (msg) => {
 
 // Discord に接続します。
 bot.connect();
+
+/* ----------------------
+ *  RESTサービスの呼び出し
+ * ---------------------*/
+
+/** マッチの準備をします。 */
+function ready(msg) {
+    let req = client.post(baseUrl + "matches/create", function (data, response) {
+        matchId = new Buffer(data).toString();
+    });
+
+    req.on('error', function (err) {
+        bot.createMessage(msg.channel.id, "すまん、上手く行かなんだ。");
+    });
+}
+
+/** マッチ情報を取得します。 */
+function info(msg) {
+    let req = client.get(baseUrl + "matches/{id}?matchId=" + matchId, function (data, response) {
+        var result = data.matchId;
+        bot.createMessage(msg.channel.id, result);
+    });
+
+    req.on('error', function (err) {
+        bot.createMessage(msg.channel.id, "すまん、上手く行かなんだ。");
+    });
+}
