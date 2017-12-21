@@ -1,4 +1,4 @@
-onst Eris = require("eris");
+const Eris = require("eris");
 
 // BOT_TOKEN は 自身が作成したBotの Bot token の文字を記述します。
 var bot = new Eris("KKSlnCeKiN_c09UVVQrvPD6EILn_VyJo");
