@@ -23,6 +23,9 @@ bot.on("messageCreate", (msg) => {
                 info(msg);
             }
             break;
+        case "!entry":
+            entry(msg);
+            break;
         default:
       }
 });
@@ -42,8 +45,23 @@ let matchId = null;
 
 /** マッチの準備をします。 */
 function ready(msg) {
-    let req = client.post(baseUrl + "matches/create", function (data, response) {
+    let createRequest = client.post(encodeURI(baseUrl + "matches/create"), function (data, response) {
         matchId = new Buffer(data).toString();
+    });
+    createRequest.on('error', function (err) {
+        bot.createMessage(msg.channel.id, "すまん、上手く行かなんだ。");
+    });
+}
+
+/** マッチ情報を取得します。 */
+function info(msg) {
+    let req = client.get(encodeURI(baseUrl + "matches/{id}?matchId=" + matchId), function (data, response) {
+        let reservers = data.reservers;
+        bot.createMessage(msg.channel.id, "マッチID： " + data.matchId);
+        bot.createMessage(msg.channel.id, "参加者：");
+        reservers.forEach(reserver => {
+            bot.createMessage(msg.channel.id, reserver.name);
+        });
     });
 
     req.on('error', function (err) {
@@ -51,14 +69,30 @@ function ready(msg) {
     });
 }
 
-/** マッチ情報を取得します。 */
-function info(msg) {
-    let req = client.get(baseUrl + "matches/{id}?matchId=" + matchId, function (data, response) {
-        var result = data.matchId;
-        bot.createMessage(msg.channel.id, result);
+/** マッチに参加します */
+function entry(msg) {
+    let entryName = getMessegeAuthorName(msg);
+    let entryReqest = client.put(encodeURI(baseUrl + "matches/{id}/members/{name}?matchId=" + matchId 
+    + "&memberName=" + entryName), function (data, response) {
+        bot.createMessage(msg.channel.id, "りょーかい、" + entryName + "はん。参加受け付けたで！");
     });
-
-    req.on('error', function (err) {
+    entryReqest.on('error', function (err) {
         bot.createMessage(msg.channel.id, "すまん、上手く行かなんだ。");
-    });
+    });  
+
+}
+
+/* ----------------------
+ *  ユーティリティの類
+ * ---------------------*/
+
+/** 発言者の名前を取得します。ニックネームを優先して採用します。 */
+function getMessegeAuthorName(msg){
+    let name = null;
+    if(msg.member.nick == null){
+        name = msg.member.username;
+    } else {
+        name = msg.member.nick;
+    }
+    return name;
 }
