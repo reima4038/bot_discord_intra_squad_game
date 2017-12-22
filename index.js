@@ -46,7 +46,9 @@ function ready(msg) {
         matchId = new Buffer(data).toString();
     });
 
-    req.on('error', errorMessage(err, msg));
+    req.on('error', function (err) {
+        bot.createMessage(msg.channel.id, "すまん、上手く行かなんだ。");
+    });
 }
 
 /** マッチ情報を取得します。 */
@@ -56,9 +58,7 @@ function info(msg) {
         bot.createMessage(msg.channel.id, result);
     });
 
-    req.on('error', errorMessage(err, msg));
-}
-
-function errorMessage(err, msg){    
-    bot.createMessage(msg.channel.id, "すまん、上手く行かなんだ。");
+    req.on('error', function (err) {
+        bot.createMessage(msg.channel.id, "すまん、上手く行かなんだ。");
+    });
 }
