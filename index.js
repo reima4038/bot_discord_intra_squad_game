@@ -148,7 +148,6 @@ function assign(msg) {
 function showTeams(msg) {
     let showTeamsRequest = client.get(encodeURI(baseUrl + "matches/{id}/teams?matchId=" + matchId), function (data, response) {
         bot.createMessage(msg.channel.id, "チームの発表や。");
-        console.log(data);
         data.forEach(team => {
             bot.createMessage(msg.channel.id, team.teamName);
             team.teamMembers.forEach(member => {
