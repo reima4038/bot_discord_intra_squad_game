@@ -8,6 +8,8 @@ bot.on("ready", () => {
     console.log("Ready!");
 });
 
+let matchId = null;
+
 bot.on("messageCreate", (msg) => {
     // 誰かがメッセージ(チャット)を発言した時に呼び出されるイベントです。
     switch (msg.content){
@@ -16,15 +18,53 @@ bot.on("messageCreate", (msg) => {
             ready(msg);
             break;
         case "!info":
-            if(matchId == null){
-                bot.createMessage(msg.channel.id, "なんや、マッチの準備ができてないな。");  
+            if(isNotReady()){
+                bot.createMessage(msg.channel.id, "なんや、準備ができてないな。段取りするから、[!ready]と入力してくれ。");  
             } else {   
-                bot.createMessage(msg.channel.id, "よしよし、マッチ情報やな。よぉ聞いとれよ。");                            
                 info(msg);
             }
             break;
         case "!entry":
-            entry(msg);
+            if(isNotReady()){
+                bot.createMessage(msg.channel.id, "なんや、準備ができてないな。段取りするから、[!ready]と入力してくれ。");  
+            } else {   
+                entry(msg);
+            }
+            break;
+        case "!leave":
+            if(isNotReady()){
+                bot.createMessage(msg.channel.id, "なんや、準備ができてないな。段取りするから、[!ready]と入力してくれ。");  
+            } else {   
+                leave(msg);
+            }
+            break;
+        case "!assign":
+            if(isNotReady()){
+                bot.createMessage(msg.channel.id, "なんや、準備ができてないな。段取りするから、[!ready]と入力してくれ。");  
+            } else {   
+                assign(msg);
+            }
+            break;
+        case "!team":
+            if(isNotReady()){
+                bot.createMessage(msg.channel.id, "なんや、準備ができてないな。段取りするから、[!ready]と入力してくれ。");  
+            } else {   
+                showTeams(msg);
+            }
+            break;
+        case "!start":
+            if(isNotReady()){
+                bot.createMessage(msg.channel.id, "なんや、準備ができてないな。段取りするから、[!ready]と入力してくれ。");  
+            } else {   
+                bot.createMessage(msg.channel.id, "ほな始めるで！"); 
+            } 
+            break;
+        case "!close":
+            if(isNotReady()){
+                bot.createMessage(msg.channel.id, "なんや、準備ができてないな。段取りするから、[!ready]と入力してくれ。");  
+            } else {   
+                bot.createMessage(msg.channel.id, "おう、お疲れさん。またやろうな。");  
+            }
             break;
         default:
       }
@@ -41,7 +81,6 @@ const Buffer = require("buffer").Buffer;
 
 const client = new Client();
 const baseUrl = "http://localhost:8080/form-matchup-tables/";
-let matchId = null;
 
 /** マッチの準備をします。 */
 function ready(msg) {
@@ -55,6 +94,7 @@ function ready(msg) {
 
 /** マッチ情報を取得します。 */
 function info(msg) {
+    bot.createMessage(msg.channel.id, "よしよし、マッチ情報やな。よぉ聞いとれよ。");                            
     let req = client.get(encodeURI(baseUrl + "matches/{id}?matchId=" + matchId), function (data, response) {
         let reservers = data.reservers;
         bot.createMessage(msg.channel.id, "マッチID： " + data.matchId);
@@ -79,12 +119,57 @@ function entry(msg) {
     entryReqest.on('error', function (err) {
         bot.createMessage(msg.channel.id, "すまん、上手く行かなんだ。");
     });  
-
 }
 
+/** マッチから退出します */
+function leave(msg) {
+    let leaveName = getMessegeAuthorName(msg);
+    let leaveReqest = client.delete(encodeURI(baseUrl + "matches/{id}/members/{name}?matchId=" + matchId 
+    + "&memberName=" + leaveName), function (data, response) {
+        bot.createMessage(msg.channel.id, "りょーかい、" + leaveName + "はん。マッチから抜けるで。");
+    });
+    leaveReqest.on('error', function (err) {
+        bot.createMessage(msg.channel.id, "すまん、上手く行かなんだ。");
+    });  
+}
+
+/** チームを振り分けます */
+function assign(msg) {
+    let assignRequest = client.put(encodeURI(baseUrl + "matches/{id}/teams/assign?matchId=" + matchId), function (data, response) {
+        bot.createMessage(msg.channel.id, "おーう、わかった。チーム分けするで。");
+        showTeams(msg);
+    });
+    assignRequest.on('error', function (err) {
+        bot.createMessage(msg.channel.id, "すまん、上手く行かなんだ。");
+    });  
+}
+
+/** チームを発表します。 */
+function showTeams(msg) {
+    let showTeamsRequest = client.get(encodeURI(baseUrl + "matches/{id}/teams?matchId=" + matchId), function (data, response) {
+        bot.createMessage(msg.channel.id, "チームの発表や。");
+        console.log(data);
+        data.forEach(team => {
+            bot.createMessage(msg.channel.id, team.teamName);
+            team.teamMembers.forEach(member => {
+                bot.createMessage(msg.channel.id, member.name);
+            })
+        });
+        bot.createMessage(msg.channel.id, "以上！");
+    });
+    
+    showTeamsRequest.on('error', function (err) {
+        bot.createMessage(msg.channel.id, "すまん、上手く行かなんだ。");
+    });  
+}
 /* ----------------------
  *  ユーティリティの類
  * ---------------------*/
+
+function isNotReady(){
+    if(matchId == null) return true;
+    return false;
+}
 
 /** 発言者の名前を取得します。ニックネームを優先して採用します。 */
 function getMessegeAuthorName(msg){
