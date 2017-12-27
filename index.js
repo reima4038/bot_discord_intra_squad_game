@@ -1,7 +1,7 @@
 const Eris = require("eris");
 
 // BOT_TOKEN は 自身が作成したBotの Bot token の文字を記述します。
-const bot = new Eris("MzkzMzk0NTI3MDY4NDg3Njkw.DR1Kqw.3MuP3gLdtS3hjPyVu-9y3JHPcME");
+const bot = new Eris("YOUR TOKEN");
 
 bot.on("ready", () => {
     // bot が準備できたら呼び出されるイベントです。
@@ -14,43 +14,22 @@ bot.on("messageCreate", (msg) => {
     // 誰かがメッセージ(チャット)を発言した時に呼び出されるイベントです。
     switch (msg.content){
         case "!ready":
-            bot.createMessage(msg.channel.id, "ほな、マッチの準備をするで〜。");    
-            ready(msg);
+            execute(ready, msg);
             break;
         case "!info":
-            if(isNotReady()){
-                bot.createMessage(msg.channel.id, "なんや、準備ができてないな。段取りするから、[!ready]と入力してくれ。");  
-            } else {   
-                info(msg);
-            }
+            readyAndExecute(info, msg)
             break;
         case "!entry":
-            if(isNotReady()){
-                bot.createMessage(msg.channel.id, "なんや、準備ができてないな。段取りするから、[!ready]と入力してくれ。");  
-            } else {   
-                entry(msg);
-            }
+            readyAndExecute(entry, msg)
             break;
         case "!leave":
-            if(isNotReady()){
-                bot.createMessage(msg.channel.id, "なんや、準備ができてないな。段取りするから、[!ready]と入力してくれ。");  
-            } else {   
-                leave(msg);
-            }
+            readyAndExecute(leave, msg);            
             break;
         case "!assign":
-            if(isNotReady()){
-                bot.createMessage(msg.channel.id, "なんや、準備ができてないな。段取りするから、[!ready]と入力してくれ。");  
-            } else {   
-                assign(msg);
-            }
+            readyAndExecute(assign, msg);            
             break;
         case "!team":
-            if(isNotReady()){
-                bot.createMessage(msg.channel.id, "なんや、準備ができてないな。段取りするから、[!ready]と入力してくれ。");  
-            } else {   
-                showTeams(msg);
-            }
+            readyAndExecute(showTeams, msg);
             break;
         case "!start":
             if(isNotReady()){
@@ -70,6 +49,27 @@ bot.on("messageCreate", (msg) => {
       }
 });
 
+/**
+ * コマンドを実行する。
+ * @param {実行コマンドのコールバック関数} cmd 
+ */
+function execute(cmd, msg){
+    cmd(msg);
+}
+
+/**
+ * コマンドを実行する。
+ * マッチの準備が行われてない場合、準備する旨の発現を行う。
+ * @param {実行コマンドのコールバック関数} cmd 
+ */
+function readyAndExecute(cmd, msg){
+    if(isNotReady()){
+        bot.createMessage(msg.channel.id, "なんや、準備ができてないな。段取りするから、[!ready]と入力してくれ。");  
+    } else {   
+        cmd(msg);
+    } 
+}
+
 // Discord に接続します。
 bot.connect();
 
@@ -84,6 +84,7 @@ const baseUrl = "http://localhost:8080/form-matchup-tables/";
 
 /** マッチの準備をします。 */
 function ready(msg) {
+    bot.createMessage(msg.channel.id, "ほな、マッチの準備をするで〜。");    
     let createRequest = client.post(encodeURI(baseUrl + "matches/create"), function (data, response) {
         matchId = new Buffer(data).toString();
     });
