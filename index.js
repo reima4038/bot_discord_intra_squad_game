@@ -31,9 +31,6 @@ bot.on("messageCreate", (msg) => {
         case "!start":
             readyAndExecute(start, msg);
             break;
-        case "!end":
-            execute(close, msg);
-            break;
         default:
       }
 });
@@ -130,18 +127,12 @@ function assign(msg) {
 function start(msg) {
     bot.createMessage(msg.channel.id, "さぁ、マッチ開始やで。");
     client.put(encodeURI(baseUrl + "matches/{id}/start?matchId=" + matchId), function (data, response) {
-        sayTeamInfo(msg, data)
+        sayTeamInfo(msg, data);
+        matchId = null;
         bot.createMessage(msg.channel.id, "次のマッチを準備するなら[!ready]や。");
     }).on('error', function (err) {
         bot.createMessage(msg.channel.id, "すまん、上手く行かなんだ。");
     }); 
-}
-
-/** マッチを終了します。 */
-function close(msg) {
-    bot.createMessage(msg.channel.id, "おう、お疲れさん。またやろうな。");  
-    bot.createMessage(msg.channel.id, "次のマッチを準備するなら[!ready]や。");
-    matchId = null;
 }
 
 /** チームメンバーを発言します。 */
