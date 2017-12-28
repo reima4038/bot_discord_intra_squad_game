@@ -1,7 +1,7 @@
 const Eris = require("eris");
 
 // BOT_TOKEN は 自身が作成したBotの Bot token の文字を記述します。
-const bot = new Eris("YOUR TOKEN");
+const bot = new Eris("MzkzMzk0NTI3MDY4NDg3Njkw.DSZ72g.zYENRpuUteh2djYK0GJMgZz4B-4");
 
 bot.on("ready", () => {
     // bot が準備できたら呼び出されるイベントです。
@@ -38,6 +38,9 @@ bot.on("messageCreate", (msg) => {
             break;
         case "!start":
             readyAndExecute(start, msg);
+            break;
+        case "!talk":
+            execute(talk, msg);
             break;
         default:
       }
@@ -141,6 +144,19 @@ function start(msg) {
     }).on('error', function (err) {
         bot.createMessage(msg.channel.id, "すまん、上手く行かなんだ。");
     }); 
+}
+
+/** なんか喋ります。 */
+const sentence = 
+    [
+    "ほんま、魔法使いにろくな奴おらんわ。ぺっ。",
+    "そういえば、内蔵むき出しで骨が飛び出たものごっつい奴に食われたことあんねんけどな。ワイ、鶏肉みたいな味やってんて。カエルか。",
+    "ワイ、うさんくさい魔法使いに飼われとってんけどな。ちゃうねん。逆にワイが魔法使いを飼ったるっちゅーねん。",
+    "ワイが魔法使いに捕まったときな、檻に入れられとったんやけど、鉄やってん。そら溶けるわ。",
+    "ワイが捕まっとった檻から抜けたとき、あのみょーちきりんの顔に毒吐いたってん。ざまーみさらせやな。"
+    ];
+function talk(msg) {
+    bot.createMessage(msg.channel.id, shuffleArray(sentence)[0]);
 }
 
 /** チームメンバーを発言します。 */
