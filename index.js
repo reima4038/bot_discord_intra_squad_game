@@ -28,6 +28,9 @@ bot.on("messageCreate", (msg) => {
         case "!assign":
             readyAndExecute(assign, msg);            
             break;
+        case "!reassign":
+            readyAndExecute(reassign, msg);
+            break;
         case "!team":
             readyAndExecute(showTeams, msg);
             break;
@@ -141,6 +144,17 @@ function assign(msg) {
         showTeams(msg);
     });
     assignRequest.on('error', function (err) {
+        bot.createMessage(msg.channel.id, "すまん、上手く行かなんだ。");
+    });  
+}
+
+/** チームを振り分けなおす */
+function reassign(msg) {
+    let reassignRequest = client.put(encodeURI(baseUrl + "matches/{id}/teams/reassign?matchId=" + matchId), function (data, response) {
+        bot.createMessage(msg.channel.id, "おーう、わかった。振り分け直すで。");
+        showTeams(msg);
+    });
+    reassignRequest.on('error', function (err) {
         bot.createMessage(msg.channel.id, "すまん、上手く行かなんだ。");
     });  
 }
