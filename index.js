@@ -35,18 +35,10 @@ bot.on("messageCreate", (msg) => {
             readyAndExecute(showTeams, msg);
             break;
         case "!start":
-            if(isNotReady()){
-                bot.createMessage(msg.channel.id, "なんや、準備ができてないな。段取りするから、[!ready]と入力してくれ。");  
-            } else {   
-                bot.createMessage(msg.channel.id, "ほな始めるで！"); 
-            } 
+            readyAndExecute(start, msg);
             break;
         case "!close":
-            if(isNotReady()){
-                bot.createMessage(msg.channel.id, "なんや、準備ができてないな。段取りするから、[!ready]と入力してくれ。");  
-            } else {   
-                bot.createMessage(msg.channel.id, "おう、お疲れさん。またやろうな。");  
-            }
+            execute(close, msg);
             break;
         default:
       }
@@ -176,6 +168,23 @@ function showTeams(msg) {
         bot.createMessage(msg.channel.id, "すまん、上手く行かなんだ。");
     });  
 }
+
+/** マッチを開始します。 */
+function start(msg) {
+    let startRequest = client.get(encodeURI(baseUrl + "matches/{id}/start?matchId=" + matchId), function (data, response) {
+        bot.createMessage(msg.channel.id, "さぁ、マッチ開始やで。");
+    });
+    startRequest.on('error', function (err) {
+        bot.createMessage(msg.channel.id, "すまん、上手く行かなんだ。");
+    }); 
+}
+
+/** マッチを終了します。 */
+function close(msg) {
+    bot.createMessage(msg.channel.id, "おう、お疲れさん。またやろうな。");  
+    matchId = null;
+}
+
 /* ----------------------
  *  ユーティリティの類
  * ---------------------*/
