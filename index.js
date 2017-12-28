@@ -14,18 +14,26 @@ bot.on("messageCreate", (msg) => {
     // 誰かがメッセージ(チャット)を発言した時に呼び出されるイベントです。
     switch (msg.content){
         case "!ready":
+        case "!r":
             execute(ready, msg);
             break;
         case "!info":
+        case "!i":
             readyAndExecute(info, msg)
             break;
         case "!entry":
+        case "!e":
+        case "!in":
             readyAndExecute(entry, msg)
             break;
         case "!leave":
+        case "!l":
+        case "!out":
             readyAndExecute(leave, msg);            
             break;
         case "!shuffle":
+        case "!assign":
+        case "!sh":
             readyAndExecute(assign, msg);            
             break;
         case "!start":
