@@ -179,7 +179,6 @@ function sayTeamInfo(msg, data){
         reserver_names.push(reserver.name);
     });
     bot.createMessage(msg.channel.id, "・控え: " + reserver_names);
-    bot.createMessage(msg.channel.id, "・マッチID: " + data.matchId);
 }
 
 /* ----------------------
