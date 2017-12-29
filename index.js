@@ -1,13 +1,14 @@
 const Eris = require("eris");
 
 // BOT_TOKEN は 自身が作成したBotの Bot token の文字を記述します。
-const bot = new Eris("MzkzMzk0NTI3MDY4NDg3Njkw.DSfuQQ.7HqqwiaixAHoTa0XTa_5KKLJacg");
+const bot = new Eris("YOUR TOKEN");
 
 bot.on("ready", () => {
     // bot が準備できたら呼び出されるイベントです。
     console.log("Ready!");
 });
 
+const version = "0.1.0(α)";
 let matchId = null;
 
 bot.on("messageCreate", (msg) => {
@@ -41,6 +42,9 @@ bot.on("messageCreate", (msg) => {
             break;
         case "!talk":
             execute(talk, msg);
+            break;
+        case "!version":
+            bot.createMessage(msg.channel.id, version);  
             break;
         default:
       }
