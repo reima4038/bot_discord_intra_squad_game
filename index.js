@@ -1,7 +1,7 @@
 const Eris = require("eris");
 
 // BOT_TOKEN は 自身が作成したBotの Bot token の文字を記述します。
-const bot = new Eris("YOUR TOKEN");
+const bot = new Eris("MzkzMzk0NTI3MDY4NDg3Njkw.DSfuQQ.7HqqwiaixAHoTa0XTa_5KKLJacg");
 
 bot.on("ready", () => {
     // bot が準備できたら呼び出されるイベントです。
@@ -81,13 +81,17 @@ const baseUrl = "http://localhost:8080/form-matchup-tables/";
 
 /** マッチの準備をします。 */
 function ready(msg) {
-    bot.createMessage(msg.channel.id, "ほな、マッチの準備をするで〜。");    
-    client.post(encodeURI(baseUrl + "matches/create"), function (data, response) {
-        matchId = new Buffer(data).toString();
-        bot.createMessage(msg.channel.id, "マッチにエントリーするなら[!entry]、参加中のメンバーを見たいなら[!info]と言ってくれ。");    
-    }).on('error', function (err) {
-        bot.createMessage(msg.channel.id, "すまん、上手く行かなんだ。");
-    });
+    if(matchId == null){
+        bot.createMessage(msg.channel.id, "ほな、マッチの準備をするで〜。");    
+        client.post(encodeURI(baseUrl + "matches/create"), function (data, response) {
+            matchId = new Buffer(data).toString();
+            bot.createMessage(msg.channel.id, "マッチにエントリーするなら[!entry]、参加中のメンバーを見たいなら[!info]と言ってくれ。");    
+        }).on('error', function (err) {
+            bot.createMessage(msg.channel.id, "すまん、上手く行かなんだ。");
+        });
+    } else {
+        bot.createMessage(msg.channel.id, "準備中のマッチがあるみたいや。次のマッチを準備する前に[!start]してくれ。");    
+    }
 }
 
 /** マッチ情報を取得します。 */
