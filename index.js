@@ -3,13 +3,13 @@ const Eris = require("eris");
 // BOT_TOKEN は 自身が作成したBotの Bot token の文字を記述します。
 const bot = new Eris("YOUR TOKEN");
 
+const version = "0.1.0(α)";
+let matchId = null;
+
 bot.on("ready", () => {
     // bot が準備できたら呼び出されるイベントです。
     console.log("Ready!");
 });
-
-const version = "0.1.0(α)";
-let matchId = null;
 
 bot.on("messageCreate", (msg) => {
     // 誰かがメッセージ(チャット)を発言した時に呼び出されるイベントです。
@@ -83,18 +83,18 @@ const Buffer = require("buffer").Buffer;
 const client = new Client();
 const baseUrl = "http://localhost:8080/form-matchup-tables/";
 
-/** マッチの準備をします。 */
+/** 紅白戦の準備をします。 */
 function ready(msg) {
     if(matchId == null){
-        bot.createMessage(msg.channel.id, "ほな、マッチの準備をするで〜。");    
+        bot.createMessage(msg.channel.id, "ほな、紅白戦の準備をするで〜。");    
         client.post(encodeURI(baseUrl + "matches/create"), function (data, response) {
             matchId = new Buffer(data).toString();
-            bot.createMessage(msg.channel.id, "マッチにエントリーするなら[!entry]、参加中のメンバーを見たいなら[!info]と言ってくれ。");    
+            bot.createMessage(msg.channel.id, "紅白戦にエントリーするなら[!entry]、参加中のメンバーを見たいなら[!info]と言ってくれ。");    
         }).on('error', function (err) {
             bot.createMessage(msg.channel.id, "すまん、上手く行かなんだ。");
         });
     } else {
-        bot.createMessage(msg.channel.id, "準備中のマッチがあるみたいや。次のマッチを準備する前に[!start]してくれ。");    
+        bot.createMessage(msg.channel.id, "準備中の紅白戦があるみたいや。次の紅白戦を準備する前に[!start]してくれ。");    
     }
 }
 
@@ -125,7 +125,7 @@ function leave(msg) {
     let leaveName = getMessegeAuthorName(msg);
     client.delete(encodeURI(baseUrl + "matches/{id}/members/{name}?matchId=" + matchId 
     + "&memberName=" + leaveName), function (data, response) {
-        bot.createMessage(msg.channel.id, "りょーかい、" + leaveName + "はん。マッチから抜けるで。");
+        bot.createMessage(msg.channel.id, "りょーかい、" + leaveName + "はん。紅白戦から抜けるで。");
         bot.createMessage(msg.channel.id, "もう一度参加するなら[!entry]と言ってくれ。");
     }).on('error', function (err) {
         bot.createMessage(msg.channel.id, "すまん、上手く行かなんだ。");
@@ -142,13 +142,13 @@ function assign(msg) {
     });  
 }
 
-/** マッチを開始します。 */
+/** 紅白戦を開始します。 */
 function start(msg) {
-    bot.createMessage(msg.channel.id, "さぁ、マッチ開始やで。");
+    bot.createMessage(msg.channel.id, "さぁ、紅白戦開始やで。");
     client.put(encodeURI(baseUrl + "matches/{id}/start?matchId=" + matchId), function (data, response) {
         sayTeamInfo(msg, data);
         matchId = null;
-        bot.createMessage(msg.channel.id, "次のマッチを準備するなら[!ready]や。");
+        bot.createMessage(msg.channel.id, "次の紅白戦を準備するなら[!ready]や。");
     }).on('error', function (err) {
         bot.createMessage(msg.channel.id, "すまん、上手く行かなんだ。");
     }); 
