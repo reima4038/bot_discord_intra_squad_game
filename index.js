@@ -102,7 +102,7 @@ function ready(msg) {
 function info(msg) {
     client.get(encodeURI(baseUrl + "matches/{id}?matchId=" + matchId), function (data, response) {
         sayTeamInfo(msg, data);
-        bot.createMessage(msg.channel.id, "控えをチームに振り分けるなら[!shuffle]、ゲーム開始は[!start]、ゲーム終了は[!end]や");
+        bot.createMessage(msg.channel.id, "控えをチームに振り分けるなら[!shuffle]、ゲーム開始は[!start]や");
     }).on('error', function (err) {
         bot.createMessage(msg.channel.id, "すまん、上手く行かなんだ。");
     });
