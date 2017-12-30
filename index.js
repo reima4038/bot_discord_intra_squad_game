@@ -175,10 +175,9 @@ function talk(msg) {
 /** チームメンバーを発言します。 */
 function sayTeamInfo(msg, data){
     data.teams.forEach(team => {
-        let role = shuffleArray(["1st", "2nd", "3rd", "4th", "5th"]);
         let member_names = [];
         team.teamMembers.forEach(member => {
-            member_names.push(member.name + "[" + role.pop() + "]");
+            member_names.push(member.name + "[" + member.role + "]");
         });
         bot.createMessage(msg.channel.id, "・" + team.teamName + ": " + member_names);
     });
@@ -209,13 +208,3 @@ function getMessegeAuthorName(msg){
     return name;
 }
 
-/** 配列の順番をランダムに入れ替える via Fisher–Yates Algo. */
-function shuffleArray(array){
-    for (var i = array.length - 1; i >= 0; i--){
-        // 0~iのランダムな数値を取得
-        var rand = Math.floor( Math.random() * ( i + 1 ) );
-        // 配列の数値を入れ替える
-        [array[i], array[rand]] = [array[rand], array[i]]
-      }
-      return array;
-}
